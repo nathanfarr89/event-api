@@ -14,7 +14,8 @@ type event struct {
 	ID          string `json: "ID"`
 	Title       string `json: "Title"`
 	Date        string `json: "Date"`
-	Description string `string: "Description`
+	Description string `json: "Description`
+	Category    string `json: "Category"`
 }
 
 type allEvents []event
@@ -25,17 +26,74 @@ var events = allEvents{
 		Title:       "Bleachers Concert",
 		Date:        "10/12/21",
 		Description: "Bleachers at The Union",
+		Category:    "Concert",
+	},
+	{
+		ID:          "2",
+		Title:       "CHVRCHES Concert",
+		Date:        "12/10/21",
+		Description: "CHVRCHES at The Union",
+		Category:    "Concert",
+	},
+	{
+		ID:          "3",
+		Title:       "Take The Sadness Out Of Saturday Night",
+		Date:        "7/30/21",
+		Description: "Bleachers Album Release",
+		Category:    "Music",
+	},
+	{
+		ID:          "4",
+		Title:       "Screen Violence",
+		Date:        "8/27/21",
+		Description: "CHVRCHES Album Release",
+		Category:    "Music",
+	},
+	{
+		ID:          "5",
+		Title:       "Deathloop",
+		Date:        "9/14/21",
+		Description: "Deathloop Release",
+		Category:    "PS5",
+	},
+	{
+		ID:          "6",
+		Title:       "Metroid Dread",
+		Date:        "10/8/21",
+		Description: "Metroid Dread Release",
+		Category:    "Nintendo",
+	},
+	{
+		ID:          "7",
+		Title:       "Switch OLED",
+		Date:        "10/8/21",
+		Description: "Switch OLED Release",
+		Category:    "Nintendo",
+	},
+	{
+		ID:          "8",
+		Title:       "Waitress with Sara Bareilles",
+		Date:        "10/2/21",
+		Description: "Waitress at the Barrymore Theatre",
+		Category:    "Concert",
 	},
 }
+var newId = 9
 
 func createEvent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var newEvent event
 	reqBody, err := ioutil.ReadAll(r.Body)
+
 	if err != nil {
 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
 	}
 
 	json.Unmarshal(reqBody, &newEvent)
+	newEvent.ID = fmt.Sprint(newId)
+	newId += 1
 	events = append(events, newEvent)
 	w.WriteHeader(http.StatusCreated)
 
@@ -71,6 +129,7 @@ func updateEvent(w http.ResponseWriter, r *http.Request) {
 			singleEvent.Title = updatedEvent.Title
 			singleEvent.Date = updatedEvent.Date
 			singleEvent.Description = updatedEvent.Description
+			singleEvent.Category = updatedEvent.Category
 			events = append(events[:i], singleEvent)
 			json.NewEncoder(w).Encode(singleEvent)
 		}
